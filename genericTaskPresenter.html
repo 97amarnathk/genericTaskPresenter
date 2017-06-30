@@ -1,0 +1,279 @@
+<!--Start Skeleton Row-->
+<div class="row skeleton">
+
+  <!-- Feedback items for the user -->
+  <p><span id="i18n_working_task">You are working now on task:</span> <span id="task-id" class="label label-warning">#</span></p>
+  <p><span id="i18n_tasks_completed">You have completed:</span> <span id="done" class="label label-info"></span> <span id="i18n_tasks_from">tasks from</span>
+  <!-- Feedback ENDS here -->
+
+  <!-- Progress progress-bar for the user -->
+  <span id="total" class="label label-inverse"></span></p>
+  <div class="progress progress-striped">
+      <div id="progress" rel="tooltip" title="#" class="progress-bar" style="width: 0%;"></div>
+  </div>
+  <!--Progress bar ENDS here -->
+
+  <!-- Will hold the Resource -->
+  <div id = "resource-holder" text-align="center">
+    <a id="photo-link" href="#">
+        <img id="photo" src="http://lorempixel.com/480/480" style="margin:0px auto;display:block">
+    </a>
+  </div>
+  <!-- Resource Holder ENDS here -->
+
+  <!-- Question form holder -->
+  <div id="questionslot">
+  <div id="questionsholder">
+  </div>
+  </div>
+  <!-- Question form ENDS here -->
+
+  <!-- Submit Button -->
+	<button class="btn btn-primary btn-answer" style="margin:0px auto; display:block;">Submit</button>
+  <!-- Submit button ENDS here -->
+</div>
+
+<script type="text/javascript">
+(function() {
+// Default language
+var userLocale = "en";
+// Translations
+var messages = {"en": {
+                        "i18n_welldone": "Well done!",
+                        "i18n_welldone_text": "Your answer has been saved",
+                        "i18n_loading_next_task": "Loading next task...",
+                        "i18n_task_completed": "The task has been completed!",
+                        "i18n_thanks": "Thanks a lot!",
+                        "i18n_congratulations": "Congratulations",
+                        "i18n_congratulations_text": "You have participated in all available tasks!",
+                        "i18n_yes": "Yes",
+                        "i18n_no_photo": "No photo",
+                        "i18n_i_dont_know": "I don't know",
+                        "i18n_working_task": "You are working now on task:",
+                        "i18n_tasks_completed": "You have completed:",
+                        "i18n_tasks_from": "tasks from",
+                        "i18n_show_comments": "Show comments:",
+                        "i18n_hide_comments": "Hide comments:",
+                        "i18n_question": "Do you see a human face in this photo?",
+                      },
+                "es": {
+                        "i18n_welldone": "Bien hecho!",
+                        "i18n_welldone_text": "Tu respuesta ha sido guardada",
+                        "i18n_loading_next_task": "Cargando la siguiente tarea...",
+                        "i18n_task_completed": "La tarea ha sido completadas!",
+                        "i18n_thanks": "Muchísimas gracias!",
+                        "i18n_congratulations": "Enhorabuena",
+                        "i18n_congratulations_text": "Has participado en todas las tareas disponibles!",
+                        "i18n_yes": "Sí",
+                        "i18n_no_photo": "No hay foto",
+                        "i18n_i_dont_know": "No lo sé",
+                        "i18n_working_task": "Estás trabajando en la tarea:",
+                        "i18n_tasks_completed": "Has completado:",
+                        "i18n_tasks_from": "tareas de",
+                        "i18n_show_comments": "Mostrar comentarios",
+                        "i18n_hide_comments": "Ocultar comentarios",
+                        "i18n_question": "¿Ves una cara humana en esta foto?",
+                      },
+               };
+// Update userLocale with server side information
+ $(document).ready(function(){
+     userLocale = document.getElementById('PYBOSSA_USER_LOCALE').textContent.trim();
+});
+
+function i18n_translate() {
+    var ids = Object.keys(messages[userLocale])
+    for (i=0; i<ids.length; i++) {
+        console.log("Translating: " + ids[i]);
+        if (document.getElementById(ids[i])) {
+            document.getElementById(ids[i]).innerHTML = messages[userLocale][ids[i]];
+        }
+    }
+}
+
+
+function loadUserProgress() {
+    pybossa.userProgress('myflickrperson3').done(function(data){
+        var pct = Math.round((data.done*100)/data.total);
+        $("#progress").css("width", pct.toString() +"%");
+        $("#progress").attr("title", pct.toString() + "% completed!");
+        $("#progress").tooltip({'placement': 'left'});
+        $("#total").text(data.total);
+        $("#done").text(data.done);
+    });
+}
+
+function renderQuestions(questionArray) {
+  var questionsHolder = document.getElementById("questionsholder");
+  for(var i=0;i<questionArray.length;i++) {
+    var currentQuestion = questionArray[i];
+
+    var qDiv = document.createElement("DIV");
+    var qForm = document.createElement("FORM");
+    var qString = document.createElement("H3");
+    var qnum = i+1;
+    //Render the questionString
+    qString.innerHTML="Q."+qnum+" "+currentQuestion.questionString;
+
+    //Add input fields
+    if(currentQuestion.type=="normal") {
+      var input = document.createElement("INPUT");
+      input.type="text";
+      qForm.appendChild(input);
+    }
+    else if(currentQuestion.type=="mcqs") {
+      var choices = currentQuestion.answers;
+      for(var j=0;j<choices.length;j++) {
+        var currentChoice = choices[j];
+
+        var choiceDiv = document.createElement("DIV");
+        var lineBreak = document.createElement("br");
+        var radio = document.createElement("INPUT");
+
+        radio.type = "radio";
+        radio.name = "option";
+        radio.value = currentChoice;
+
+        choiceDiv.appendChild(radio);
+        choiceDiv.innerHTML = choiceDiv.innerHTML + " " + currentChoice;
+        choiceDiv.appendChild(lineBreak);
+        qForm.appendChild(choiceDiv);
+      }
+    }
+
+    qDiv.appendChild(qString);
+    qDiv.appendChild(qForm);
+    questionsHolder.appendChild(qDiv);
+    console.log("## Questions rendered");
+  }
+}
+
+function getProjectById(projectid,type) {
+      console.log("## Inflating Projects");
+        p = $.ajax({
+            url: '/api/project',
+            data: 'id='+projectid,
+            dataType:'json',
+            success: function(data) {
+              console.log("## AJAX Success");
+              var project = data[0];
+              //console.log(project);
+              if(type=="images")
+                renderQuestions(project.info.questionSet.images);
+              else if(type=="videos")
+                renderQuestions(project.info.questionSet.videos);
+              else if(type=="audios")
+                renderQuestions(project.info.questionSet.audios);
+              else if(type=="documents")
+                renderQuestions(project.info.questionSet.documents);
+            }
+        });
+}
+
+pybossa.taskLoaded(function(task, deferred) {
+    if ( !$.isEmptyObject(task) ) {
+        // load image from flickr
+        var img = $('<img />');
+        img.load(function() {
+            // continue as soon as the image is loaded
+            deferred.resolve(task);
+            pybossaNotify("", false, "loading");
+        });
+        img.attr('src', task.info.url).css('height', 460);
+        img.addClass('img-thumbnail');
+        task.info.image = img;
+    }
+    else {
+        deferred.resolve(task);
+    }
+});
+
+function getTextValue(form) {
+  var input = form.getElementsByTagName("input")[0];
+  var val = input.value;
+  if(val=="")
+    return(-1);
+  else
+    return(val);
+}
+
+function getRadioValue(form) {
+  var radioArray = form.getElementsByTagName("input");
+  var val=-1;
+  for(var i=0;i<radioArray.length;i++) {
+    if(radioArray[i].checked) {
+      val = radioArray[i].value;
+      break;
+    }
+  }
+  return(val);
+}
+
+function removeQuestions() {
+  var qSlot = document.getElementById("questionslot");
+  qSlot.removeChild(qSlot.children[0]);
+  var qHolder = document.createElement("div");
+  qHolder.id = "questionsholder";
+  qSlot.appendChild(qHolder);
+  console.log("## Removed Questions");
+}
+
+function getAnswerJSON() {
+  var answer = new Array();
+  var qHolder = document.getElementById("questionsholder");
+  var qDivs = qHolder.children;
+
+  for(var i=0;i<qDivs.length;i++) {
+    var curr = qDivs[i];
+    var qForm = curr.getElementsByTagName("form")[0];
+    if(qForm.getElementsByTagName('input')[0].type=="text")
+      answer.push(getTextValue(qForm));
+    else if(qForm.getElementsByTagName('input')[0].type=="radio")
+      answer.push(getRadioValue(qForm));
+  }
+  console.log(answer);
+  removeQuestions();
+  console.log("## Answers fetched");
+  return(answer);
+}
+
+
+
+pybossa.presentTask(function(task, deferred) {
+    if ( !$.isEmptyObject(task) ) {
+        loadUserProgress();
+        i18n_translate();
+        $('#photo-link').html('').append(task.info.image);
+        $("#photo-link").attr("href", task.info.link);
+        $('#task-id').html(task.id);
+        console.log("Task ##"+task.id)
+        getProjectById(task.project_id,task.info.type);
+        $('.btn-answer').off('click').on('click', function(evt) {
+            console.log("## Submit pressed")
+            var btn = $(this);
+            var answer = getAnswerJSON();
+            if (typeof answer != 'undefined') {
+                pybossa.saveTask(task.id, answer).done(function() {
+                    pybossaNotify("Loading picture...", true, "loading");
+                    deferred.resolve();
+                });
+                if ($("#disqus_thread").is(":visible")) {
+                    $('#disqus_thread').toggle();
+                    $('.btn-disqus').toggle();
+                }
+            }
+            else {
+                pybossaNotify("Oops... Something went wrong.", true, "error");
+            }
+        });
+        pybossaNotify("Loading picture...", false, "loading");
+    }
+    else {
+        $(".skeleton").hide();
+        pybossaNotify("Loading picture...", false, "loading");
+        pybossaNotify("Thanks! You have participated in all available tasks. Enjoy some of your time!", true, "info");
+    }
+});
+
+pybossa.run('myflickrperson3');
+})();
+</script>
