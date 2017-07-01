@@ -14,4 +14,19 @@ To work properly, this presenter assumes a particular data format in which tasks
 
 ### The Project JSON Format -
 
-The JSON of Project in PYBOSSA already has a dictionary `info`.
+The JSON of Project in PYBOSSA already has a dictionary `info`. This presenter requires a dictionary `questionSet` inside `project.info`. Here is its structure -
+
+```json
+"questionSet": {
+  "images":[
+    {
+      "questionString" : "What is this image about?"
+      "type" : "normal"
+      answers : []
+    },
+    {
+    
+    }
+  ]
+}
+```
