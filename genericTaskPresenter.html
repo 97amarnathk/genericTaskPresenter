@@ -1,15 +1,18 @@
 <!--Start Skeleton Row-->
+
+
 <style>
+
 input{
 		color:gray;
 		padding:10px;
 		border:2px solid gray;
 		border-radius:5px;
 		margin:5px;
-
 }
 
 </style>
+
 <div class="row skeleton">
 
   <!-- Feedback items for the user -->
@@ -183,15 +186,7 @@ function getProjectById(projectid,type) {
 pybossa.taskLoaded(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
         // load image from flickr
-        var img = $('<img />');
-        img.load(function() {
-            // continue as soon as the image is loaded
-            deferred.resolve(task);
-            pybossaNotify("", false, "loading");
-        });
-        img.attr('src', task.info.url).css('height', 460);
-        img.addClass('img-thumbnail');
-        task.info.image = img;
+        deferred.resolve(task);
     }
     else {
         deferred.resolve(task);
@@ -219,6 +214,12 @@ function getRadioValue(form) {
   return(val);
 }
 
+function removeResource() {
+  var resourceHolder = document.getElementById("resource-holder");
+  var resource = document.getElementById("resource");
+  resourceHolder.removeChild(resource);
+}
+
 function removeQuestions() {
   var qSlot = document.getElementById("questionslot");
   qSlot.removeChild(qSlot.children[0]);
@@ -243,11 +244,67 @@ function getAnswerJSON() {
   }
   console.log(answer);
   removeQuestions();
+  removeResource();
   console.log("## Answers fetched");
   return(answer);
 }
 
+function renderImage(task) {
+  console.log("## Rendering Image");
+  var resourceHolder = document.getElementById("resource-holder");
+  var img = document.createElement("img");
+  img.src = task.info.url;
+  img.id = "resource";
+  img.height="460";
+  resourceHolder.appendChild(img);
+}
 
+function renderVideo(task) {
+  console.log("## Rendering Video");
+  var resourceHolder = document.getElementById("resource-holder");
+  var video = document.createElement("video");
+  video.src = task.info.url;
+  video.id = "resource";
+  video.height = "460";
+  video.controls = true;
+  resourceHolder.appendChild(video);
+}
+
+function renderAudio(task) {
+  console.log("## Rendering Audio")
+  var resourceHolder = document.getElementById("resource-holder");
+  var audio = document.createElement("audio");
+  audio.src=task.info.url;
+  audio.id="resource";
+  audio.controls = true;
+  resourceHolder.appendChild(audio);
+}
+
+function renderDocument(task) {
+  console.log("## Rendering Document");
+  var resourceHolder = document.getElementById("resource-holder");
+  var doc = document.createElement("embed");
+  doc.src = task.info.url;
+  doc.type = "application/pdf";
+  doc.height = "400px";
+  doc.width = "100%";
+  doc.id="resource";
+  resourceHolder.appendChild(doc);
+}
+
+function renderResource(task) {
+  var type = task.info.type;
+  console.log("## Rendering");
+  console.log("## type "+type);
+  if(type=="images")
+    renderImage(task);
+  else if(type=="videos")
+    renderVideo(task);
+  else if(type=="audios")
+    renderAudio(task);
+  else if(type=="documents")
+    renderDocument(task);
+}
 
 pybossa.presentTask(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
@@ -258,6 +315,7 @@ pybossa.presentTask(function(task, deferred) {
         $('#task-id').html(task.id);
         console.log("Task ##"+task.id)
         getProjectById(task.project_id,task.info.type);
+        renderResource(task);
         $('.btn-answer').off('click').on('click', function(evt) {
             console.log("## Submit pressed")
             var btn = $(this);
