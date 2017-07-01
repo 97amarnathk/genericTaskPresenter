@@ -86,3 +86,5 @@ Here is a sample of `task.info` -
       "type": "images"
 }
 ```
+
+Here you can see that the `url` happens to be a file system. That is because the resource is taken locally from a computer. But any resource url will work fine.
