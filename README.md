@@ -32,36 +32,36 @@ The JSON of Project in PYBOSSA already has a dictionary `info`. This presenter r
   ],
   "videos":[
     {
-      "questionString" : "What is this image about?",
+      "questionString" : "What is this video about?",
       "type" : "normal",
       answers : []
     },
     {
-      "questionString" : "Do you like this image?",
+      "questionString" : "Do you like this video?",
       "type" : "mcqs",
       answers : ["Yes","No"]
     }
   ],
   "audios":[
     {
-      "questionString" : "What is this image about?",
+      "questionString" : "What is this audio about?",
       "type" : "normal",
       answers : []
     },
     {
-      "questionString" : "Do you like this image?",
+      "questionString" : "Do you like this audio?",
       "type" : "mcqs",
       answers : ["Yes","No"]
     }
   ],
   "documents":[
     {
-      "questionString" : "What is this image about?",
+      "questionString" : "What is this document about?",
       "type" : "normal",
       answers : []
     },
     {
-      "questionString" : "Do you like this image?",
+      "questionString" : "Do you like this document?",
       "type" : "mcqs",
       answers : ["Yes","No"]
     }
