@@ -6,3 +6,4 @@ This is a generic task presenter for PYBOSSA which can handle the following medi
 * Audio - mp3
 * Document - pdf
 
+It supports multiple questions of mcq and text type.
