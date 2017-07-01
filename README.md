@@ -69,3 +69,10 @@ The JSON of Project in PYBOSSA already has a dictionary `info`. This presenter r
 }
 ```
 As you can see, `questionSet` contains 4 arrays - `images`, `videos`, `audios` and `documents`. Each of these arrays contain questions. Each question has a `questionString` which is basically what you want to ask. Next there is a variable called `type`, which decides whether the question expects a text type answer or is an mcq. The type `normal` indicates a text based answer. The type `mcqs` indicates an mcq based answer. If the type is `mcqs` then an additional array `answers` is required which has the choices given to the user.
+
+## The task JSON format -
+
+Just like the project, the task JSON in PYBOSSA also contains an `info` field. This field should have 2 sub-fields -
+
+* **url** - The url of the resource which is to be crowdsourced.
+* **type** - The data type of the resource. It can be of the type - `images`, `videos`, `audios`, `documents`.
