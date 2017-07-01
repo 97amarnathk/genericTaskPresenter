@@ -76,3 +76,13 @@ Just like the project, the task JSON in PYBOSSA also contains an `info` field. T
 
 * **url** - The url of the resource which is to be crowdsourced.
 * **type** - The data type of the resource. It can be of the type - `images`, `videos`, `audios`, `documents`.
+
+Here is a sample of `task.info` -
+
+```javascript
+"info": {
+      "url": "/uploads/local_upload_directory/35_1498908303/images/1498908304.01IMG_8022.JPG",
+      "subtype": "jpg",
+      "type": "images"
+}
+```
