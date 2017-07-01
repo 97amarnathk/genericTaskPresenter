@@ -16,16 +16,54 @@ To work properly, this presenter assumes a particular data format in which tasks
 
 The JSON of Project in PYBOSSA already has a dictionary `info`. This presenter requires a dictionary `questionSet` inside `project.info`. Here is its structure -
 
-```json
+```javascript
 "questionSet": {
   "images":[
     {
-      "questionString" : "What is this image about?"
-      "type" : "normal"
+      "questionString" : "What is this image about?",
+      "type" : "normal",
       answers : []
     },
     {
-    
+      "questionString" : "Do you like this image?",
+      "type" : "mcqs",
+      answers : ["Yes","No"]
+    }
+  ],
+  "videos":[
+    {
+      "questionString" : "What is this image about?",
+      "type" : "normal",
+      answers : []
+    },
+    {
+      "questionString" : "Do you like this image?",
+      "type" : "mcqs",
+      answers : ["Yes","No"]
+    }
+  ],
+  "audios":[
+    {
+      "questionString" : "What is this image about?",
+      "type" : "normal",
+      answers : []
+    },
+    {
+      "questionString" : "Do you like this image?",
+      "type" : "mcqs",
+      answers : ["Yes","No"]
+    }
+  ],
+  "documents":[
+    {
+      "questionString" : "What is this image about?",
+      "type" : "normal",
+      answers : []
+    },
+    {
+      "questionString" : "Do you like this image?",
+      "type" : "mcqs",
+      answers : ["Yes","No"]
     }
   ]
 }
